@@ -229,8 +229,6 @@ describe('FormGenerator', () => {
 
     await wrapper.find('form').trigger('submit')
 
-    expect(wrapper.emitted('submit')).toEqual([
-      [modelValue],
-    ])
+    expect(wrapper.emitted('submit')).toEqual([[modelValue]])
   })
 })

@@ -32,24 +32,15 @@ const handleSubmit = (value: Record<string, string | boolean>) => {
       <div class="form-header">
         <h1>Автоформа</h1>
 
-        <p>
-          Форма генерируется автоматически на основе JSON-схемы.
-        </p>
+        <p>Форма генерируется автоматически на основе JSON-схемы.</p>
       </div>
 
       <div class="form-container">
         <h2>Данные пользователя</h2>
 
-        <FormGenerator
-          v-model="formData"
-          :schema="formSchema"
-          @submit="handleSubmit"
-        />
+        <FormGenerator v-model="formData" :schema="formSchema" @submit="handleSubmit" />
 
-        <div
-          v-if="submittedData"
-          class="form-success"
-        >
+        <div v-if="submittedData" class="form-success">
           <h3>Форма успешно отправлена</h3>
 
           <pre class="form-data">{{ submittedData }}</pre>

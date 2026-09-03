@@ -99,12 +99,7 @@ const togglePasswordVisibility = () => {
       </span>
     </label>
 
-    <p
-      v-if="error"
-      id="field-error"
-      class="field__error"
-      role="alert"
-    >
+    <p v-if="error" id="field-error" class="field__error" role="alert">
       {{ error }}
     </p>
   </div>
