@@ -1,3 +1,18 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import FormCheckbox from './components/form/FormCheckbox.vue'
+import FormSelect from './components/form/FormSelect.vue'
+import FormTextField from './components/form/FormTextField.vue'
+
+const name = ref('')
+const email = ref('')
+const password = ref('')
+const role = ref('')
+const terms = ref(false)
+
+const roles = ['Админ', 'Пользователь']
+</script>
+
 <template>
   <main class="page">
     <section class="form-card">
@@ -11,7 +26,15 @@
         <h2>Данные пользователя</h2>
 
         <div class="form-fields">
-          <!-- Поля формы будут добавлены на следующих шагах -->
+          <FormTextField v-model="name" label="Имя" type="text" />
+
+          <FormTextField v-model="email" label="Email" type="email" />
+
+          <FormTextField v-model="password" label="Пароль" type="password" />
+
+          <FormSelect v-model="role" label="Роль" :options="roles" />
+
+          <FormCheckbox v-model="terms" label="Согласен с условиями" />
         </div>
       </div>
     </section>
@@ -45,6 +68,9 @@
 }
 
 .form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   margin-top: 24px;
 }
 
