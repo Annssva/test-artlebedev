@@ -15,6 +15,14 @@ const emit = defineEmits<{
 
 const isPasswordVisible = ref(false)
 
+const inputType = (type: 'text' | 'email' | 'password') => {
+  if (type === 'password') {
+    return isPasswordVisible.value ? 'text' : 'password'
+  }
+
+  return type
+}
+
 const updateValue = (event: Event) => {
   const target = event.target as HTMLInputElement
   emit('update:modelValue', target.value)
@@ -38,7 +46,7 @@ const togglePasswordVisibility = () => {
         <input
           class="field__input"
           :class="{ 'field__input--error': error }"
-          :type="type === 'password' && !isPasswordVisible ? 'password' : 'text'"
+          :type="inputType(type)"
           :value="modelValue"
           :aria-invalid="!!error"
           :aria-describedby="error ? 'field-error' : undefined"
@@ -66,7 +74,7 @@ const togglePasswordVisibility = () => {
             aria-hidden="true"
           >
             <path
-              d="M2.036 12.322a1 1 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178c.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178"
+              d="M2.036 12.322a1 1 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178c.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573 3.007-9.963 7.178"
             />
             <path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0" />
           </svg>
@@ -91,7 +99,12 @@ const togglePasswordVisibility = () => {
       </span>
     </label>
 
-    <p v-if="error" id="field-error" class="field__error" role="alert">
+    <p
+      v-if="error"
+      id="field-error"
+      class="field__error"
+      role="alert"
+    >
       {{ error }}
     </p>
   </div>

@@ -24,17 +24,21 @@ const getField = (model: string) => {
 }
 
 const updateField = (model: string, value: string | boolean) => {
+  const field = getField(model)
+
   emit('update:modelValue', {
     ...props.modelValue,
     [model]: value,
   })
 
-  if (touched[model]) {
-    const field = getField(model)
+  if (field?.type === 'checkbox') {
+    touched[model] = true
+    errors[model] = validateField(field, value)
+    return
+  }
 
-    if (field) {
-      errors[model] = validateField(field, value)
-    }
+  if (touched[model] && field) {
+    errors[model] = validateField(field, value)
   }
 }
 
@@ -77,11 +81,22 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <form class="form" novalidate @submit.prevent="handleSubmit">
+  <form
+    class="form"
+    novalidate
+    @submit.prevent="handleSubmit"
+  >
     <div class="form-fields">
-      <template v-for="field in schema.fields" :key="field.model">
+      <template
+        v-for="field in schema.fields"
+        :key="field.model"
+      >
         <FormTextField
-          v-if="field.type === 'text' || field.type === 'email' || field.type === 'password'"
+          v-if="
+            field.type === 'text' ||
+            field.type === 'email' ||
+            field.type === 'password'
+          "
           :label="field.label"
           :type="field.type"
           :model-value="modelValue[field.model] as string"
@@ -111,7 +126,12 @@ const handleSubmit = () => {
       </template>
     </div>
 
-    <button type="submit" class="form__submit">Отправить</button>
+    <button
+      type="submit"
+      class="form__submit"
+    >
+      Отправить
+    </button>
   </form>
 </template>
 
