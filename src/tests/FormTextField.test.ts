@@ -6,6 +6,7 @@ describe('FormTextField', () => {
   it('renders label and input', () => {
     const wrapper = mount(FormTextField, {
       props: {
+        id: 'name',
         label: 'Имя',
         type: 'text',
         modelValue: '',
@@ -19,6 +20,7 @@ describe('FormTextField', () => {
   it('emits updated value', async () => {
     const wrapper = mount(FormTextField, {
       props: {
+        id: 'name',
         label: 'Имя',
         type: 'text',
         modelValue: '',
@@ -33,6 +35,7 @@ describe('FormTextField', () => {
   it('emits blur', async () => {
     const wrapper = mount(FormTextField, {
       props: {
+        id: 'name',
         label: 'Имя',
         type: 'text',
         modelValue: '',
@@ -47,6 +50,7 @@ describe('FormTextField', () => {
   it('shows error', () => {
     const wrapper = mount(FormTextField, {
       props: {
+        id: 'name',
         label: 'Имя',
         type: 'text',
         modelValue: '',
@@ -61,6 +65,7 @@ describe('FormTextField', () => {
   it('toggles password visibility', async () => {
     const wrapper = mount(FormTextField, {
       props: {
+        id: 'password',
         label: 'Пароль',
         type: 'password',
         modelValue: '123456',

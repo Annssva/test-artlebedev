@@ -1,5 +1,6 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
+  id: string
   label: string
   modelValue: boolean
   error?: string | null
@@ -9,6 +10,8 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean]
   blur: []
 }>()
+
+const errorId = `${props.id}-error`
 
 const updateValue = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -22,13 +25,14 @@ const handleBlur = () => {
 
 <template>
   <div class="field">
-    <label class="field__label">
+    <label class="field__label" :for="id">
       <input
+        :id="id"
         class="field__checkbox"
         type="checkbox"
         :checked="modelValue"
         :aria-invalid="!!error"
-        :aria-describedby="error ? 'field-error' : undefined"
+        :aria-describedby="error ? errorId : undefined"
         @change="updateValue"
         @blur="handleBlur"
       />
@@ -57,7 +61,7 @@ const handleBlur = () => {
       </span>
     </label>
 
-    <p v-if="error" id="field-error" class="field__error" role="alert">
+    <p v-if="error" :id="errorId" class="field__error" role="alert">
       {{ error }}
     </p>
   </div>

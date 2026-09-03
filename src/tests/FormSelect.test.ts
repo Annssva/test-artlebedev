@@ -4,6 +4,7 @@ import FormSelect from '../components/form/FormSelect.vue'
 
 describe('FormSelect', () => {
   const props = {
+    id: 'role',
     label: 'Роль',
     modelValue: '',
     options: ['Админ', 'Пользователь'],

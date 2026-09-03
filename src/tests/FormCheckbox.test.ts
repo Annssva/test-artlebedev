@@ -6,6 +6,7 @@ describe('FormCheckbox', () => {
   it('renders label and checkbox', () => {
     const wrapper = mount(FormCheckbox, {
       props: {
+        id: 'terms',
         label: 'Согласен с условиями',
         modelValue: false,
       },
@@ -18,6 +19,7 @@ describe('FormCheckbox', () => {
   it('emits updated value when checked', async () => {
     const wrapper = mount(FormCheckbox, {
       props: {
+        id: 'terms',
         label: 'Согласен с условиями',
         modelValue: false,
       },
@@ -31,6 +33,7 @@ describe('FormCheckbox', () => {
   it('emits blur', async () => {
     const wrapper = mount(FormCheckbox, {
       props: {
+        id: 'terms',
         label: 'Согласен с условиями',
         modelValue: false,
       },
@@ -44,6 +47,7 @@ describe('FormCheckbox', () => {
   it('shows checked state', () => {
     const wrapper = mount(FormCheckbox, {
       props: {
+        id: 'terms',
         label: 'Согласен с условиями',
         modelValue: true,
       },
@@ -55,6 +59,7 @@ describe('FormCheckbox', () => {
   it('shows error', () => {
     const wrapper = mount(FormCheckbox, {
       props: {
+        id: 'terms',
         label: 'Согласен с условиями',
         modelValue: false,
         error: 'Поле обязательно для заполнения',

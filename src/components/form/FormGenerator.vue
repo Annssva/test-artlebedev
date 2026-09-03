@@ -86,6 +86,7 @@ const handleSubmit = () => {
       <template v-for="field in schema.fields" :key="field.model">
         <FormTextField
           v-if="field.type === 'text' || field.type === 'email' || field.type === 'password'"
+          :id="field.model"
           :label="field.label"
           :type="field.type"
           :model-value="modelValue[field.model] as string"
@@ -96,6 +97,7 @@ const handleSubmit = () => {
 
         <FormSelect
           v-else-if="field.type === 'select'"
+          :id="field.model"
           :label="field.label"
           :options="field.options"
           :model-value="modelValue[field.model] as string"
@@ -106,6 +108,7 @@ const handleSubmit = () => {
 
         <FormCheckbox
           v-else-if="field.type === 'checkbox'"
+          :id="field.model"
           :label="field.label"
           :model-value="modelValue[field.model] as boolean"
           :error="touched[field.model] ? errors[field.model] : null"

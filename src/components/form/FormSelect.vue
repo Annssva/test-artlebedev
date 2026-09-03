@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-defineProps<{
+const props = defineProps<{
+  id: string
   label: string
   modelValue: string
   options: string[]
@@ -14,6 +15,10 @@ const emit = defineEmits<{
 }>()
 
 const isOpen = ref(false)
+
+const labelId = `${props.id}-label`
+const errorId = `${props.id}-error`
+const menuId = `${props.id}-menu`
 
 const selectOption = (value: string) => {
   emit('update:modelValue', value)
@@ -32,11 +37,17 @@ const toggleDropdown = () => {
 const handleBlur = () => {
   emit('blur')
 }
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    isOpen.value = false
+  }
+}
 </script>
 
 <template>
   <div class="field">
-    <span class="field__label">
+    <span :id="labelId" class="field__label">
       {{ label }}
     </span>
 
@@ -48,11 +59,16 @@ const handleBlur = () => {
           'field__trigger--open': isOpen,
           'field__trigger--error': error,
         }"
+        role="combobox"
+        :aria-labelledby="labelId"
         :aria-expanded="isOpen"
+        :aria-controls="menuId"
         :aria-invalid="!!error"
-        :aria-describedby="error ? 'field-error' : undefined"
+        :aria-describedby="error ? errorId : undefined"
+        :aria-haspopup="'listbox'"
         @click="toggleDropdown"
         @blur="handleBlur"
+        @keydown="handleKeydown"
       >
         <span :class="{ field__placeholder: !modelValue }">
           {{ modelValue || 'Выберите значение' }}
@@ -77,13 +93,21 @@ const handleBlur = () => {
       </button>
 
       <Transition name="dropdown">
-        <div v-if="isOpen" class="field__menu">
+        <div
+          v-if="isOpen"
+          :id="menuId"
+          class="field__menu"
+          role="listbox"
+          :aria-labelledby="labelId"
+        >
           <button
             v-for="option in options"
             :key="option"
             type="button"
             class="field__option"
             :class="{ 'field__option--selected': option === modelValue }"
+            role="option"
+            :aria-selected="option === modelValue"
             @click="selectOption(option)"
           >
             <span>{{ option }}</span>
@@ -108,7 +132,7 @@ const handleBlur = () => {
       </Transition>
     </div>
 
-    <p v-if="error" id="field-error" class="field__error" role="alert">
+    <p v-if="error" :id="errorId" class="field__error" role="alert">
       {{ error }}
     </p>
   </div>
@@ -270,6 +294,11 @@ const handleBlur = () => {
   transition: background-color 0.3s ease;
 
   &:hover {
+    background: #f4f4f5;
+  }
+
+  &:focus-visible {
+    outline: none;
     background: #f4f4f5;
   }
 
