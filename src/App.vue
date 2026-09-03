@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import FormGenerator from './components/form/FormGenerator.vue'
 import { formSchema } from './schemas/formSchema'
 import type { FormField } from './types/form'
@@ -19,9 +19,14 @@ const createFormData = () => {
 }
 
 const formData = reactive(createFormData())
+const submittedData = ref<Record<string, string | boolean> | null>(null)
 
 const updateFormData = (value: Record<string, string | boolean>) => {
   Object.assign(formData, value)
+}
+
+const handleSubmit = (value: Record<string, string | boolean>) => {
+  submittedData.value = value
 }
 </script>
 
@@ -41,9 +46,14 @@ const updateFormData = (value: Record<string, string | boolean>) => {
           :schema="formSchema"
           :model-value="formData"
           @update:model-value="updateFormData"
+          @submit="handleSubmit"
         />
 
-        <pre class="form-data">{{ formData }}</pre>
+        <div v-if="submittedData" class="form-success">
+          <h3>Форма успешно отправлена</h3>
+
+          <pre class="form-data">{{ submittedData }}</pre>
+        </div>
       </div>
     </section>
   </main>
@@ -75,8 +85,21 @@ const updateFormData = (value: Record<string, string | boolean>) => {
   box-shadow: var(--shadow);
 }
 
+.form-success {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+
+  h3 {
+    margin: 0 0 12px;
+    color: var(--text-h);
+    font-size: 18px;
+    font-weight: 500;
+  }
+}
+
 .form-data {
-  margin: 24px 0 0;
+  margin: 0;
   padding: 16px;
   border-radius: 8px;
   background: var(--code-bg);

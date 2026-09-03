@@ -20,7 +20,7 @@ export const validateField = (field: FormField, value: string | boolean): Valida
     field.minLength !== undefined &&
     String(value).length < field.minLength
   ) {
-    return `Минимальная длина — ${field.minLength} символов`
+    return `Минимальная длина ${field.minLength} символов`
   }
 
   if (
