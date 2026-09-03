@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import FormGenerator from './components/form/FormGenerator.vue'
 import { formSchema } from './schemas/formSchema'
 import type { FormField } from './types/form'
@@ -18,12 +18,8 @@ const createFormData = () => {
   return data
 }
 
-const formData = reactive(createFormData())
+const formData = ref(createFormData())
 const submittedData = ref<Record<string, string | boolean> | null>(null)
-
-const updateFormData = (value: Record<string, string | boolean>) => {
-  Object.assign(formData, value)
-}
 
 const handleSubmit = (value: Record<string, string | boolean>) => {
   submittedData.value = value
@@ -36,20 +32,24 @@ const handleSubmit = (value: Record<string, string | boolean>) => {
       <div class="form-header">
         <h1>Автоформа</h1>
 
-        <p>Форма генерируется автоматически на основе JSON-схемы.</p>
+        <p>
+          Форма генерируется автоматически на основе JSON-схемы.
+        </p>
       </div>
 
       <div class="form-container">
         <h2>Данные пользователя</h2>
 
         <FormGenerator
+          v-model="formData"
           :schema="formSchema"
-          :model-value="formData"
-          @update:model-value="updateFormData"
           @submit="handleSubmit"
         />
 
-        <div v-if="submittedData" class="form-success">
+        <div
+          v-if="submittedData"
+          class="form-success"
+        >
           <h3>Форма успешно отправлена</h3>
 
           <pre class="form-data">{{ submittedData }}</pre>
