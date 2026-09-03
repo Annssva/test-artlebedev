@@ -1,16 +1,28 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import FormCheckbox from './components/form/FormCheckbox.vue'
-import FormSelect from './components/form/FormSelect.vue'
-import FormTextField from './components/form/FormTextField.vue'
+import { reactive } from 'vue'
+import FormGenerator from './components/form/FormGenerator.vue'
+import { formSchema } from './schemas/formSchema'
+import type { FormField } from './types/form'
 
-const name = ref('')
-const email = ref('')
-const password = ref('')
-const role = ref('')
-const terms = ref(false)
+const getInitialValue = (field: FormField): string | boolean => {
+  return field.type === 'checkbox' ? false : ''
+}
 
-const roles = ['Админ', 'Пользователь']
+const createFormData = () => {
+  const data: Record<string, string | boolean> = {}
+
+  for (const field of formSchema.fields) {
+    data[field.model] = getInitialValue(field)
+  }
+
+  return data
+}
+
+const formData = reactive(createFormData())
+
+const updateFormData = (value: Record<string, string | boolean>) => {
+  Object.assign(formData, value)
+}
 </script>
 
 <template>
@@ -25,17 +37,13 @@ const roles = ['Админ', 'Пользователь']
       <div class="form-container">
         <h2>Данные пользователя</h2>
 
-        <div class="form-fields">
-          <FormTextField v-model="name" label="Имя" type="text" />
+        <FormGenerator
+          :schema="formSchema"
+          :model-value="formData"
+          @update:model-value="updateFormData"
+        />
 
-          <FormTextField v-model="email" label="Email" type="email" />
-
-          <FormTextField v-model="password" label="Пароль" type="password" />
-
-          <FormSelect v-model="role" label="Роль" :options="roles" />
-
-          <FormCheckbox v-model="terms" label="Согласен с условиями" />
-        </div>
+        <pre class="form-data">{{ formData }}</pre>
       </div>
     </section>
   </main>
@@ -67,11 +75,15 @@ const roles = ['Админ', 'Пользователь']
   box-shadow: var(--shadow);
 }
 
-.form-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 24px;
+.form-data {
+  margin: 24px 0 0;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--code-bg);
+  color: var(--text-h);
+  font-family: var(--mono);
+  font-size: 14px;
+  overflow-x: auto;
 }
 
 @media (max-width: 600px) {

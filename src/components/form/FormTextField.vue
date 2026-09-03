@@ -5,10 +5,12 @@ defineProps<{
   label: string
   type: 'text' | 'email' | 'password'
   modelValue: string
+  error?: string | null
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
+  blur: []
 }>()
 
 const isPasswordVisible = ref(false)
@@ -16,6 +18,10 @@ const isPasswordVisible = ref(false)
 const updateValue = (event: Event) => {
   const target = event.target as HTMLInputElement
   emit('update:modelValue', target.value)
+}
+
+const handleBlur = () => {
+  emit('blur')
 }
 
 const togglePasswordVisibility = () => {
@@ -31,9 +37,13 @@ const togglePasswordVisibility = () => {
       <span class="field__input-wrapper">
         <input
           class="field__input"
+          :class="{ 'field__input--error': error }"
           :type="type === 'password' && !isPasswordVisible ? 'password' : 'text'"
           :value="modelValue"
+          :aria-invalid="!!error"
+          :aria-describedby="error ? 'field-error' : undefined"
           @input="updateValue"
+          @blur="handleBlur"
         />
 
         <button
@@ -80,6 +90,10 @@ const togglePasswordVisibility = () => {
         </button>
       </span>
     </label>
+
+    <p v-if="error" id="field-error" class="field__error" role="alert">
+      {{ error }}
+    </p>
   </div>
 </template>
 
@@ -124,6 +138,19 @@ const togglePasswordVisibility = () => {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-bg);
   }
+
+  &--error {
+    border-color: #dc2626;
+
+    &:hover,
+    &:focus {
+      border-color: #dc2626;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+  }
 }
 
 .field__input-wrapper:has(.field__password-toggle) .field__input {
@@ -165,5 +192,12 @@ const togglePasswordVisibility = () => {
 .field__password-icon {
   width: 20px;
   height: 20px;
+}
+
+.field__error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 14px;
+  line-height: 1.4;
 }
 </style>

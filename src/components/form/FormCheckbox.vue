@@ -2,42 +2,75 @@
 defineProps<{
   label: string
   modelValue: boolean
+  error?: string | null
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
+  blur: []
 }>()
 
 const updateValue = (event: Event) => {
   const target = event.target as HTMLInputElement
   emit('update:modelValue', target.checked)
 }
+
+const handleBlur = () => {
+  emit('blur')
+}
 </script>
 
 <template>
-  <label class="field">
-    <input class="field__checkbox" type="checkbox" :checked="modelValue" @change="updateValue" />
+  <div class="field">
+    <label class="field__label">
+      <input
+        class="field__checkbox"
+        type="checkbox"
+        :checked="modelValue"
+        :aria-invalid="!!error"
+        :aria-describedby="error ? 'field-error' : undefined"
+        @change="updateValue"
+        @blur="handleBlur"
+      />
 
-    <span class="field__box" :class="{ 'field__box--checked': modelValue }" aria-hidden="true">
-      <svg class="field__check" viewBox="0 0 16 16" fill="none">
-        <path
-          d="M3 8.5L6.5 12L13 4.5"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </span>
+      <span
+        class="field__box"
+        :class="{
+          'field__box--checked': modelValue,
+          'field__box--error': error,
+        }"
+        aria-hidden="true"
+      >
+        <svg class="field__check" viewBox="0 0 16 16" fill="none">
+          <path
+            d="M3 8.5L6.5 12L13 4.5"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </span>
 
-    <span class="field__label">
-      {{ label }}
-    </span>
-  </label>
+      <span class="field__text">
+        {{ label }}
+      </span>
+    </label>
+
+    <p v-if="error" id="field-error" class="field__error" role="alert">
+      {{ error }}
+    </p>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 .field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field__label {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -84,12 +117,16 @@ const updateValue = (event: Event) => {
   &:hover {
     transform: scale(1.05);
   }
-}
 
-.field__box--checked {
-  border-color: var(--accent);
-  background: var(--accent);
-  transform: scale(1.05);
+  &--checked {
+    border-color: var(--accent);
+    background: var(--accent);
+    transform: scale(1.05);
+  }
+
+  &--error {
+    border-color: #dc2626;
+  }
 }
 
 .field__check {
@@ -100,15 +137,21 @@ const updateValue = (event: Event) => {
   transition:
     opacity 0.3s ease,
     transform 0.3s ease;
+
+  .field__box--checked & {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
 }
 
-.field__box--checked .field__check {
-  opacity: 1;
-  transform: scale(1) rotate(0);
-}
-
-.field__label {
+.field__text {
   color: var(--text-h);
-  font-weight: 500;
+}
+
+.field__error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 14px;
+  line-height: 1.4;
 }
 </style>

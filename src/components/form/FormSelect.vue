@@ -5,10 +5,12 @@ defineProps<{
   label: string
   modelValue: string
   options: string[]
+  error?: string | null
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
+  blur: []
 }>()
 
 const isOpen = ref(false)
@@ -18,8 +20,17 @@ const selectOption = (value: string) => {
   isOpen.value = false
 }
 
+const clearSelection = () => {
+  emit('update:modelValue', '')
+  isOpen.value = false
+}
+
 const toggleDropdown = () => {
   isOpen.value = !isOpen.value
+}
+
+const handleBlur = () => {
+  emit('blur')
 }
 </script>
 
@@ -33,15 +44,36 @@ const toggleDropdown = () => {
       <button
         type="button"
         class="field__trigger"
-        :class="{ 'field__trigger--open': isOpen }"
+        :class="{
+          'field__trigger--open': isOpen,
+          'field__trigger--error': error,
+        }"
         :aria-expanded="isOpen"
+        :aria-invalid="!!error"
+        :aria-describedby="error ? 'field-error' : undefined"
         @click="toggleDropdown"
+        @blur="handleBlur"
       >
         <span :class="{ field__placeholder: !modelValue }">
           {{ modelValue || 'Выберите значение' }}
         </span>
 
         <span class="field__arrow" aria-hidden="true" />
+      </button>
+
+      <button
+        v-if="modelValue"
+        type="button"
+        class="field__clear"
+        aria-label="Очистить выбор"
+        @click.stop="clearSelection"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94z"
+          />
+        </svg>
       </button>
 
       <Transition name="dropdown">
@@ -75,6 +107,10 @@ const toggleDropdown = () => {
         </div>
       </Transition>
     </div>
+
+    <p v-if="error" id="field-error" class="field__error" role="alert">
+      {{ error }}
+    </p>
   </div>
 </template>
 
@@ -101,7 +137,7 @@ const toggleDropdown = () => {
   justify-content: space-between;
   width: 100%;
   min-height: 44px;
-  padding: 10px 42px 10px 12px;
+  padding: 10px 72px 10px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
   outline: none;
@@ -127,47 +163,30 @@ const toggleDropdown = () => {
     box-shadow: 0 0 0 3px var(--accent-bg);
 
     .field__arrow {
-      border-color: var(--accent);
       transform: translateY(-35%) rotate(225deg);
+    }
+  }
+
+  &--error {
+    border-color: #dc2626;
+
+    &:hover,
+    &:focus-visible {
+      border-color: #dc2626;
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+
+    &.field__trigger--open {
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
     }
   }
 }
 
-.field__trigger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 42px 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  outline: none;
-  background: var(--bg);
-  color: var(--text-h);
-  text-align: left;
-  cursor: pointer;
-  transition:
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
-
-  &:hover {
-    border-color: var(--accent);
-  }
-
-  &:focus-visible {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-bg);
-  }
-
-  &--open {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-bg);
-
-    .field__arrow {
-      transform: translateY(-35%) rotate(225deg);
-    }
-  }
+.field__placeholder {
+  color: var(--text);
 }
 
 .field__arrow {
@@ -181,6 +200,43 @@ const toggleDropdown = () => {
   pointer-events: none;
   transform: translateY(-65%) rotate(45deg);
   transition: transform 0.3s ease;
+}
+
+.field__clear {
+  position: absolute;
+  top: 50%;
+  right: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease;
+
+  &:hover {
+    color: var(--text-h);
+    background: #f4f4f5;
+  }
+
+  &:focus-visible {
+    outline: none;
+    color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-bg);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .field__menu {
@@ -231,6 +287,13 @@ const toggleDropdown = () => {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
+}
+
+.field__error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .dropdown-enter-active,
