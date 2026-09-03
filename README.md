@@ -130,3 +130,12 @@ const formSchema = {
   ],
 }
 ```
+
+## Деплой
+
+Приложение опубликовано через GitHub Pages.
+
+Репозиторий: https://github.com/Annssva/test-artlebedev
+Демо: https://annssva.github.io/test-artlebedev/
+
+Деплой выполняется автоматически через GitHub Actions после push в ветку master.
